@@ -21,13 +21,14 @@ const initialState = Map({
   "phone_number": '',
   "accessToken": '',
   "membershipId": '',
-  "userId": ''
+  "userId": '',
+  "name": ''
 });
 
 export default handleActions({
   [SET_LOGIN]: (state, action) => {
 
-    const {platformId, email, profile_img, login_platform, phone_number, accessToken} = action.payload
+    const {platformId, email, profile_img, login_platform, phone_number, accessToken, name} = action.payload
 
     return state.set('platformId', platformId)
       .set('email', email)
@@ -36,12 +37,13 @@ export default handleActions({
       .set('phone_number', phone_number)
       .set('isCheckLogin', true)
       .set('accessToken', accessToken)
+      .set('name', name)
   },
   ...pender({
     type: GET_USER,
     onSuccess: (state, action) => {
       console.log("handleActions : ", action)
-      const {platformId, email, profile_img, login_platform, phone_number} = action.payload
+      const {platformId, email, profile_img, login_platform, phone_number, name} = action.payload
 
       return state.set('platformId', platformId)
         .set('email', email)
@@ -49,6 +51,7 @@ export default handleActions({
         .set('login_platform', login_platform)
         .set('phone_number', phone_number)
         .set('isCheckLogin', true)
+        .set('name', name)
     },
     onFailure: (state, action) => {
       console.log("onFailure : ", action.payload)
@@ -58,8 +61,11 @@ export default handleActions({
   ...pender({
     type: CREATE_USER,
     onSuccess:(state,action)=>{
-      console.log("handleActions : ", action)
-      const {platformId, email, profile_img, login_platform, phone_number, membershipId, userId, accessToken} = action.payload
+      console.log("handleActionsssssssssssssssssssss : ", action)
+      const {platformId, email, profile_img, login_platform, phone_number, membershipId, userId, accessToken, name} = action.payload.data
+
+      console.log('aaaaaaaaaaaaaaaaaa=>', profile_img)
+
 
       return state.set('platformId', platformId)
         .set('email', email)
@@ -70,15 +76,8 @@ export default handleActions({
         .set('isCheckLogin', true)
         .set('membershipId', membershipId)
         .set('userId', userId)
+        .set('name', name)
 
-      let keyUserId = "userId"
-      let keyMembershipId = "membershipId";
-
-      console.log('action CREATE_USER=>', action.payload)
-      GlobalStore.setStoreData(keyUserId, userId);
-      GlobalStore.setStoreData(keyMembershipId, membershipId);
-
-      return;
     },
     onFailure:(state,action)=>{
       return state.set('isCheckLogin',false)

@@ -108,12 +108,17 @@ class LoginPage extends Component<Props> {
                   GlobalStore.setStoreData(key, value)
 
                   let data = {}
+
                   data.platformId = result.id;
                   data.email = result.email;
                   data.profile_img = result.picture.data.url;
                   data.login_platform = "facebook";
                   data.isCheckLogin = true;
                   data.accessToken = accessToken.toString();
+                  data.name = result.name;
+
+                  if (result.picture.data.url == null) data.profile_img = ''
+                  if (result.name == null) data.name = ''
 
                   console.log('data=>', data);
                   // this.handleSetLogin(data);
@@ -192,6 +197,12 @@ class LoginPage extends Component<Props> {
       data.login_platform = "kakaotalk";
       data.isCheckLogin = true;
       data.accessToken = accessToken;
+      data.name = result.nickname;
+
+      GlobalStore.setStoreData("test", "1234");
+
+      if (result.profile_image_path == null) data.profile_img = ''
+      if (result.nickname == null) data.name = ''
 
       console.log('data=>', data);
       this.handleSetLogin(data);

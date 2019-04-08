@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, ScrollView, StyleSheet, Text, TouchableOpacity, View, AsyncStorage} from "react-native";
 import {Button, CardItem, Icon, Spinner, Input} from "native-base";
 import {Actions} from "react-native-router-flux";
 import Modal from "react-native-modal";
@@ -9,6 +9,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from "redux";
 import * as myPageActions from '../../store/modules/myPage/myPage';
 import * as loginActions from "../../store/modules/login/loginPage";
+
 const GlobalStore = require('../common/GlobalStore');
 
 class MyPage extends Component {
@@ -33,13 +34,13 @@ class MyPage extends Component {
     MyPageActions.change_pinNumber(pinNumber);
   };
 
-  // handleSendServer = (login) => {
-  //   const {LoginActions} = this.props;
-  //   LoginActions.create_user(login)
-  // }
+  handleSendServer = (login) => {
+    const {LoginActions} = this.props;
+    LoginActions.create_user(login)
+  }
 
   initialize = async () => {
-    const {LoginActions, MyPageActions, platformId, email, profile_img, login_platform, accessToken} = this.props;
+    const {LoginActions, MyPageActions, platformId, email, profile_img, login_platform, accessToken, name} = this.props;
     try {
 
       let data = {}
@@ -48,14 +49,31 @@ class MyPage extends Component {
       data.profile_img = profile_img;
       data.login_platform = login_platform;
       data.accessToken = accessToken;
-
+      data.name = name;
       console.log('data=>', data);
 
-      // let user = await LoginActions.create_user(data)
-      // console.log('tt=>', user.data.membershipId)
-      // let membershipId = GlobalStore.getStoreData("keyMembershipId")
-      // console.log('tt=>', membershipId)
-      MyPageActions.read_myInfo()
+      let userInfo = await LoginActions.create_user(data);
+      let user = userInfo.data;
+      let userId = user.userId;
+      let membershipId = user.membershipId;
+
+
+      console.log('userInfo=>', userInfo.data);
+      console.log('membershipId=>', membershipId);
+      // let keyUserId = "userId"
+      // let keyMembershipId = "membershipId";
+      // GlobalStore.setStoreData(keyUserId, userId);
+      // GlobalStore.setStoreData(keyMembershipId, membershipId);
+      //
+      // var test = await AsyncStorage.getItem("test");
+      // var test3 = await AsyncStorage.getItem("userId");
+      // var test2 = await AsyncStorage.getItem("membershipId");
+      //
+      // console.log('GlobalStore=>', test)
+      // console.log('GlobalStore=>', test2)
+      // console.log('GlobalStore=>', test3)
+
+      await MyPageActions.read_myInfo()
     } catch (e) {
 
       console.log("mypage error : ", e)
@@ -67,11 +85,11 @@ class MyPage extends Component {
   }
 
   render() {
-    const {gradeLevel, chargingAmount, remainingAmount, usedAmount, pinNumber, visibleMembershipAmountView, loading, profile_img, platformId} = this.props;
+    const {gradeLevel, chargingAmount, remainingAmount, usedAmount, pinNumber, visibleMembershipAmountView, loading, profile_img, platformId, name} = this.props;
 
     console.log('mypage platformId=>', platformId)
-    if (loading) return <Spinner color="black" style={styles.spinner}/>;
 
+    if (loading) return <Spinner color="black" style={styles.spinner}/>;
 
     if (visibleMembershipAmountView) {
       return (
@@ -82,7 +100,7 @@ class MyPage extends Component {
                 <Image style={styles.avatar}
                        source={{uri: profile_img}}/>
                 <Text style={styles.name}>
-                  {platformId}
+                  {name}
                 </Text>
 
               </View>
@@ -560,25 +578,27 @@ const styles = StyleSheet.create({
 });
 export default connect(
   (state) => (
-    console.log('connect state=>', state),
     {
-    gradeLevel: state.myPage.get('gradeLevel'),
-    chargingAmount: state.myPage.get('chargingAmount'),
-    remainingAmount: state.myPage.get('remainingAmount'),
-    usedAmount: state.myPage.get('usedAmount'),
-    pinNumber: state.myPage.get('pinNumber'),
-    visibleMembershipAmountView: state.myPage.get('visibleMembershipAmountView'),
-    loading: state.pender.pending['myPage/READ_MYINFO'],
-    error: state.pender.failure['myPage/READ_MYINFO'],
+      gradeLevel: state.myPage.get('gradeLevel'),
+      chargingAmount: state.myPage.get('chargingAmount'),
+      remainingAmount: state.myPage.get('remainingAmount'),
+      usedAmount: state.myPage.get('usedAmount'),
+      pinNumber: state.myPage.get('pinNumber'),
+      visibleMembershipAmountView: state.myPage.get('visibleMembershipAmountView'),
+      loading: state.pender.pending['myPage/READ_MYINFO'],
+      error: state.pender.failure['myPage/READ_MYINFO'],
 
-    platformId: state.login.get("platformId"),
-    email: state.login.get('email'),
-    profile_img: state.login.get("profile_img"),
-    login_platform: state.login.get('login_platform'),
-    isCheckLogin: state.login.get("isCheckLogin"),
-    phone_number: state.login.get("phone_number"),
-    accessToken: state.login.get("accessToken"),
-  }),
+      platformId: state.login.get("platformId"),
+      email: state.login.get('email'),
+      profile_img: state.login.get("profile_img"),
+      login_platform: state.login.get('login_platform'),
+      isCheckLogin: state.login.get("isCheckLogin"),
+      phone_number: state.login.get("phone_number"),
+      accessToken: state.login.get("accessToken"),
+      name: state.login.get("name"),
+      userId: state.login.get("name"),
+      membershipId: state.login.get("membershipId"),
+    }),
   (dispatch) => ({
     MyPageActions: bindActionCreators(myPageActions, dispatch),
     LoginActions: bindActionCreators(loginActions, dispatch)
