@@ -61,15 +61,11 @@ export default handleActions({
   ...pender({
     type: CREATE_USER,
     onSuccess:(state,action)=>{
-      console.log("handleActionsssssssssssssssssssss : ", action)
       const {platformId, email, profile_img, login_platform, phone_number, membershipId, userId, accessToken, name} = action.payload.data
-
-      console.log('aaaaaaaaaaaaaaaaaa=>', profile_img)
-
 
       return state.set('platformId', platformId)
         .set('email', email)
-        .set('profile_img', profile_img)
+        .set('profile_img', profile_img ==="" ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png': profile_img)
         .set('login_platform', login_platform)
         .set('phone_number', phone_number)
         .set('accessToken', accessToken)
