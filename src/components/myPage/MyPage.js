@@ -87,8 +87,6 @@ class MyPage extends Component {
   render() {
     const {gradeLevel, chargingAmount, remainingAmount, usedAmount, pinNumber, visibleMembershipAmountView, loading, profile_img, platformId, name} = this.props;
 
-    console.log('mypage platformId=>', platformId)
-
     if (loading) return <Spinner color="black" style={styles.spinner}/>;
 
     if (visibleMembershipAmountView) {

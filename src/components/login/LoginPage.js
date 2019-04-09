@@ -13,7 +13,17 @@ const FBSDK = require('react-native-fbsdk');
 const GlobalStore = require('../common/GlobalStore');
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableHighlight, AppRegistry, Alert, NativeModules} from 'react-native';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TouchableHighlight,
+  AppRegistry,
+  Alert,
+  NativeModules,
+  AsyncStorage
+} from 'react-native';
 import RNKakaoLogins from 'react-native-kakao-logins';
 import NativeButton from 'apsl-react-native-button';
 import {bindActionCreators} from "redux";
@@ -187,7 +197,8 @@ class LoginPage extends Component<Props> {
 
       let key = "isCheckLogin"
       let value = "true"
-      GlobalStore.setStoreData(key, value)
+
+      this.saveItem(key, value)
 
       let data = {}
       data.platformId = result.id;
@@ -199,8 +210,6 @@ class LoginPage extends Component<Props> {
       data.accessToken = accessToken;
       data.name = result.nickname;
 
-      GlobalStore.setStoreData("test", "1234");
-
       if (result.profile_image_path == null) data.profile_img = ''
       if (result.nickname == null) data.name = ''
 
@@ -208,10 +217,18 @@ class LoginPage extends Component<Props> {
       this.handleSetLogin(data);
       // this.handleSendServer(data);
 
-      Actions.popTo('MyPage');
-      Actions.jump('MyPage')
+      Actions.popTo('homeScreen');
+      Actions.homeScreen();
 
     });
+  }
+
+  async saveItem(item, selectedValue) {
+    try {
+      await AsyncStorage.setItem(item, selectedValue);
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
   }
 
   render() {
