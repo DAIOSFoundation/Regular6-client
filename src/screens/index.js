@@ -14,39 +14,37 @@ import MyPageReservationHistoryScreen from './myPage/MyPageReservationHistoryScr
 import LoginScreen from './login/LoginScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
-import {AsyncStorage, ActivityIndicator} from 'react-native';
+import {AsyncStorage, ActivityIndicator,StyleSheet} from 'react-native';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as routerActions from '../../src/store/modules/common/router';
+import {Spinner} from "native-base";
 
 class Index extends Component {
-    UNSAFE_componentWillMount(){
-        console.log("unsafe componenet will")
-    }
-
     componentDidMount() {
         console.log("fdsfdsdsfsd")
         AsyncStorage.getItem('isCheckLogin').then((token) => {
             console.log("token -=============== ; ", token)
-            if(token!==null){
+            if (token !== null) {
                 this.handleSaveToken();
+            }else{
+                this.handleChangeLoading();
             }
         })
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        // return false 하면 업데이트를 안함
-        console.log("shouldComponent update ")
-        return true
     }
     handleSaveToken = () => {
         const {RouterActions} = this.props;
         RouterActions.create_token();
     }
 
+    handleChangeLoading = () =>{
+        const {RouterActions} =this.props;
+        RouterActions.change_loading();
+    }
+
     render() {
         const {hasToken, isLoaded} = this.props;
-        console.log("indexxxxxxxxxx hasToken : ",hasToken, " isLoaded ; ",isLoaded);
+        console.log("indexxxxxxxxxx hasToken : ", hasToken, " isLoaded ; ", isLoaded);
         const tabBarIcon = ({title, focused}) => {
             switch (title) {
                 case "Home":
@@ -80,11 +78,11 @@ class Index extends Component {
 
         };
 
-        // if (isLoaded !== null) {
-        //     return (
-        //         <ActivityIndicator/>
-        //     )
-        // } else {
+        if (isLoaded === true && hasToken === false) {
+            return (
+                <Spinner color="black" style={styles.spinner}/>
+            )
+        } else {
             return (
                 <Router>
                     <Scene key='root' hideNavBar>
@@ -149,15 +147,22 @@ class Index extends Component {
             );
         }
 
-    // }
+    }
 }
+const styles=StyleSheet.create({
+    spinner: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+    }
+})
 
 export default connect(
-    (state)=>({
-        hasToken:state.router.get('hasToken'),
-        isLoaded:state.router.get('isLoaded')
+    (state) => ({
+        hasToken: state.router.get('hasToken'),
+        isLoaded: state.router.get('isLoaded')
     }),
-    (dispatch)=>({
-        RouterActions:bindActionCreators(routerActions,dispatch)
+    (dispatch) => ({
+        RouterActions: bindActionCreators(routerActions, dispatch)
     })
 )(Index)
