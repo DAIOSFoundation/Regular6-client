@@ -13,7 +13,6 @@ import * as loginActions from "../../store/modules/login/loginPage";
 const GlobalStore = require('../common/GlobalStore');
 
 class MyPage extends Component {
-
   state = {
     text: 'http://facebook.github.io/react-native/',
     isModalVisible: false,
@@ -50,13 +49,20 @@ class MyPage extends Component {
       data.login_platform = login_platform;
       data.accessToken = accessToken;
       data.name = name;
-      console.log('data=>', data);
+      // console.log('data=>', data);
+
+      // AsyncStorage.getItem('isCheckLogin').then((token) => {
+      //   console.log('loginState222222222222222222=>', token)
+      //   if (token !== "true") {
+      //     Actions.popTo('homeScreen');
+      //     Actions.loginScreen();
+      //   }
+      // })
 
       let userInfo = await LoginActions.create_user(data);
       let user = userInfo.data;
       let userId = user.userId;
       let membershipId = user.membershipId;
-
 
       console.log('userInfo=>', userInfo.data);
       console.log('membershipId=>', membershipId);
@@ -73,7 +79,7 @@ class MyPage extends Component {
       // console.log('GlobalStore=>', test2)
       // console.log('GlobalStore=>', test3)
 
-      await MyPageActions.read_myInfo()
+      await MyPageActions.read_myInfo(membershipId)
     } catch (e) {
 
       console.log("mypage error : ", e)
@@ -92,7 +98,12 @@ class MyPage extends Component {
     if (visibleMembershipAmountView) {
       return (
         <ScrollView style={styles.container}>
+
           <View>
+            <View style={styles.viewSetting}>
+              <Icon2 style={styles.setting} name="settings" style={[styles.icon, styles.margin]}
+                     onPress={() => Actions.logoutScreen()}/>
+            </View>
             <View style={styles.header}>
               <View style={styles.headerContent}>
                 <Image style={styles.avatar}
@@ -198,6 +209,10 @@ class MyPage extends Component {
       return (
         <ScrollView style={styles.container}>
           <View>
+            <View style={styles.viewSetting}>
+              <Icon2 style={styles.setting} name="settings" style={[styles.icon, styles.margin]}
+                     onPress={() => Actions.logoutScreen()}/>
+            </View>
             <View style={styles.header}>
               <View style={styles.headerContent}>
                 <Image style={styles.avatar}
@@ -571,6 +586,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+  },
+  viewSetting: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    paddingRight: 18,
+    paddingTop: 30,
+  },
+  setting: {
+    width: 16,
+    height: 16,
   }
 
 });
@@ -594,7 +620,7 @@ export default connect(
       phone_number: state.login.get("phone_number"),
       accessToken: state.login.get("accessToken"),
       name: state.login.get("name"),
-      userId: state.login.get("name"),
+      userId: state.login.get("userId"),
       membershipId: state.login.get("membershipId"),
     }),
   (dispatch) => ({

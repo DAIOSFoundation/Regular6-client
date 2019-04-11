@@ -12,37 +12,63 @@ import MyPageScreen from './myPage/MyPageScreen';
 import MyPageReservationConfirmScreen from './myPage/MyPageReservationConfirmScreen';
 import MyPageReservationHistoryScreen from './myPage/MyPageReservationHistoryScreen';
 import LoginScreen from './login/LoginScreen';
+import LogoutScreen from './login/LogoutScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AsyncStorage, ActivityIndicator,StyleSheet} from 'react-native';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import * as routerActions from '../../src/store/modules/common/router';
+import * as loginActions from "../../src/store/modules/login/loginPage";
 import {Spinner} from "native-base";
 
 class Index extends Component {
     componentDidMount() {
         console.log("fdsfdsdsfsd")
-        AsyncStorage.getItem('isCheckLogin').then((token) => {
-            console.log("token -=============== ; ", token)
-            if (token !== null) {
+        AsyncStorage.getItem('isCheckLogin').then((data) => {
+            console.log("token -=============== ; ", data)
+            if (data !== null) {
                 this.handleSaveToken();
             }else{
                 this.handleChangeLoading();
             }
         })
     }
-    handleSaveToken = () => {
-        const {RouterActions} = this.props;
-        RouterActions.create_token();
-    }
+  handleSaveToken = () => {
+    const {RouterActions} = this.props;
+    let hasToken = {hasToken:true}
+    RouterActions.create_token(hasToken);
+  }
 
-    handleChangeLoading = () =>{
-        const {RouterActions} =this.props;
-        RouterActions.change_loading();
-    }
+  handleChangeLoading = () =>{
+    const {RouterActions} =this.props;
+    let isLoaded = {isLoaded:false}
+    RouterActions.change_loading(isLoaded);
+  }
+
+  handleCheckLoginInfo = async() => {
+
+    const loginInfoJson = await AsyncStorage.getItem('loginInfo');
+    console.log('loginInfoJson====================>', loginInfoJson)
+
+      if (loginInfoJson !== null) {
+        const {LoginActions} = this.props;
+        LoginActions.set_login(loginInfoJson)
+      }
+
+    // AsyncStorage.getItem('loginInfo').then((data) => {
+    //   console.log("hhhhhhhhhhhhhhhhhhhhhhhhhh=> ; ", data)
+    //   if (data !== null) {
+    //     const {LoginActions} = this.props;
+    //     LoginActions.set_login(data)
+    //
+    //   }
+    // })
+  }
 
     render() {
+        this.handleCheckLoginInfo();
+
         const {hasToken, isLoaded} = this.props;
         console.log("indexxxxxxxxxx hasToken : ", hasToken, " isLoaded ; ", isLoaded);
         const tabBarIcon = ({title, focused}) => {
@@ -90,10 +116,7 @@ class Index extends Component {
                             <Scene key='Home' title='Home'
                                    icon={tabBarIcon}
                             >
-                                <Scene key='loginScreen' component={LoginScreen} title='레귤러식스'
-                                       initial={!hasToken}/>
-                                <Scene key='homeScreen' component={HomeScreen} title='레귤러식스'
-                                       initial={hasToken}/>
+                                <Scene key='homeScreen' component={HomeScreen} title='레귤러식스'/>
                                 <Scene key='homeDetailScreen' component={HomeDetailScreen} title='레귤러식스' backTitle=" "
                                        hideTabBar={true}
                                        headerTintColor="#000"
@@ -130,14 +153,18 @@ class Index extends Component {
 
                             <Scene key='MyPage' title='MyPage'
                                    icon={tabBarIcon}>
-                                <Scene key='myPageScreen' component={MyPageScreen} title='마이페이지'/>
+                                <Scene key='loginScreen' component={LoginScreen} title='레귤러식스'
+                                     initial={!hasToken}/>
+                                <Scene key='myPageScreen' component={MyPageScreen} title='마이페이지' initial={hasToken}/>
+                                <Scene key='logoutScreen' component={LogoutScreen} title='로그아웃' backTitle=" "
+                                       hideTabBar={true}
+                                       headerTintColor="#000"/>
                                 <Scene key='myPageReservationConfirmScreen' component={MyPageReservationConfirmScreen}
                                        title='예약확인' backTitle=" "
                                        headerTintColor="#000"
                                 />
                                 <Scene key='myPageReservationHistoryScreen' component={MyPageReservationHistoryScreen}
                                        title='지난예약' backTitle=" "
-                                       headerTintColor="#000"
                                 />
                             </Scene>
 
@@ -163,6 +190,7 @@ export default connect(
         isLoaded: state.router.get('isLoaded')
     }),
     (dispatch) => ({
-        RouterActions: bindActionCreators(routerActions, dispatch)
+        RouterActions: bindActionCreators(routerActions, dispatch),
+        LoginActions: bindActionCreators(loginActions, dispatch)
     })
 )(Index)

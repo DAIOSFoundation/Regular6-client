@@ -30,12 +30,13 @@ export default handleActions({
 
     const {platformId, email, profile_img, login_platform, phone_number, accessToken, name} = action.payload
 
+    console.log('gggggggggggggggggggggggggggggg=>', action.payload)
     return state.set('platformId', platformId)
       .set('email', email)
       .set('profile_img', profile_img)
       .set('login_platform', login_platform)
       .set('phone_number', phone_number)
-      .set('isCheckLogin', true)
+      // .set('isCheckLogin', true)
       .set('accessToken', accessToken)
       .set('name', name)
   },
@@ -50,7 +51,7 @@ export default handleActions({
         .set('profile_img', profile_img)
         .set('login_platform', login_platform)
         .set('phone_number', phone_number)
-        .set('isCheckLogin', true)
+        // .set('isCheckLogin', true)
         .set('name', name)
     },
     onFailure: (state, action) => {
@@ -69,7 +70,7 @@ export default handleActions({
         .set('login_platform', login_platform)
         .set('phone_number', phone_number)
         .set('accessToken', accessToken)
-        .set('isCheckLogin', true)
+        // .set('isCheckLogin', true)
         .set('membershipId', membershipId)
         .set('userId', userId)
         .set('name', name)

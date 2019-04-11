@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-export const readMyInfo = () => {
-    return axios.get('http://13.125.251.45:3000/v1/memberships/5c9b0e04f5e2ee40540aac85')
+export const readMyInfo = (membershipId) => {
+    console.log('tttttttttttttttttttttttttttttttttttttttt=>', membershipId)
+    return axios.get('http://13.125.251.45:3000/v1/memberships/'+ membershipId)
 };
 
 export const submitPinNumber = (pinNumber) => {

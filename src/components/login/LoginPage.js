@@ -51,7 +51,8 @@ class LoginPage extends Component {
 
     handleSaveToken = () => {
         const {RouterActions} = this.props;
-        RouterActions.create_token();
+        let hasToken = {hasToken:true}
+        RouterActions.create_token(hasToken);
     }
 
     // 카카오 로그인 시작.
@@ -108,7 +109,7 @@ class LoginPage extends Component {
                                     if (result.picture.data.url == null) data.profile_img = ''
                                     if (result.name == null) data.name = ''
 
-                                    console.log('data=>', data);
+                                    // console.log('data=>', data);
                                     // this.handleSetLogin(data);
 
                                     Actions.popTo('MyPage');
@@ -192,14 +193,15 @@ class LoginPage extends Component {
                 if (result.profile_image_path == null) data.profile_img = ''
                 if (result.nickname == null) data.name = ''
 
-                console.log('data=>', data);
                 this.handleSetLogin(data);
                 // this.handleSendServer(data);
 
+                // Actions.popTo('myPageScreen')
+                Actions.jump('myPageScreen');
+                // Actions.myPageScreen();
 
             }
         )
-        Actions.homeScreen();
     }
 
     async saveItem(item, selectedValue) {
@@ -263,7 +265,7 @@ class LoginPage extends Component {
                                 } else if (result.isCancelled) {
                                     console.log("login is cancelled.");
                                 } else {
-                                    console.log('result=>', result)
+                                    // console.log('result=>', result)
 
                                 }
                             }
