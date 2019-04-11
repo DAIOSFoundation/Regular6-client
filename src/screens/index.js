@@ -7,7 +7,7 @@ import ReservationScreen from "./reservation/ReservationScreen";
 import ReservationDetailScreen from "./reservation/ReservationDetailScreen";
 import ReservationConfirmScreen from './reservation/ReservationConfirmScreen';
 import ReservationCompleteScreen from './reservation/ReservationCompleteScreen';
-import ContactListScreen from './contactlist/ContactListScreen';
+// import ContactListScreen from './contactlist/ContactListScreen';
 import MyPageScreen from './myPage/MyPageScreen';
 import MyPageReservationConfirmScreen from './myPage/MyPageReservationConfirmScreen';
 import MyPageReservationHistoryScreen from './myPage/MyPageReservationHistoryScreen';
@@ -15,26 +15,38 @@ import LoginScreen from './login/LoginScreen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import {AsyncStorage, ActivityIndicator} from 'react-native';
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import * as routerActions from '../../src/store/modules/common/router';
 
 class Index extends Component {
-    state = {
-        "uri": "https://cdn.pixabay.com/photo/2015/06/30/18/36/st-826688_1280.jpg"
-    };
-
-    constructor() {
-        super();
-        this.state = {hasToken: false, isLoaded: false};
+    UNSAFE_componentWillMount(){
+        console.log("unsafe componenet will")
     }
 
     componentDidMount() {
+        console.log("fdsfdsdsfsd")
         AsyncStorage.getItem('isCheckLogin').then((token) => {
             console.log("token -=============== ; ", token)
-            this.setState({hasToken: token !== null, isLoaded: true})
+            if(token!==null){
+                this.handleSaveToken();
+            }
         })
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        // return false 하면 업데이트를 안함
+        console.log("shouldComponent update ")
+        return true
+    }
+    handleSaveToken = () => {
+        const {RouterActions} = this.props;
+        RouterActions.create_token();
+    }
 
     render() {
+        const {hasToken, isLoaded} = this.props;
+        console.log("indexxxxxxxxxx hasToken : ",hasToken, " isLoaded ; ",isLoaded);
         const tabBarIcon = ({title, focused}) => {
             switch (title) {
                 case "Home":
@@ -67,11 +79,12 @@ class Index extends Component {
             }
 
         };
-        if (!this.state.isLoaded) {
-            return (
-                <ActivityIndicator/>
-            )
-        } else {
+
+        // if (isLoaded !== null) {
+        //     return (
+        //         <ActivityIndicator/>
+        //     )
+        // } else {
             return (
                 <Router>
                     <Scene key='root' hideNavBar>
@@ -80,9 +93,9 @@ class Index extends Component {
                                    icon={tabBarIcon}
                             >
                                 <Scene key='loginScreen' component={LoginScreen} title='레귤러식스'
-                                       initial={!this.state.hasToken}/>
+                                       initial={!hasToken}/>
                                 <Scene key='homeScreen' component={HomeScreen} title='레귤러식스'
-                                       initial={this.state.hasToken}/>
+                                       initial={hasToken}/>
                                 <Scene key='homeDetailScreen' component={HomeDetailScreen} title='레귤러식스' backTitle=" "
                                        hideTabBar={true}
                                        headerTintColor="#000"
@@ -136,7 +149,15 @@ class Index extends Component {
             );
         }
 
-    }
+    // }
 }
 
-export default Index;
+export default connect(
+    (state)=>({
+        hasToken:state.router.get('hasToken'),
+        isLoaded:state.router.get('isLoaded')
+    }),
+    (dispatch)=>({
+        RouterActions:bindActionCreators(routerActions,dispatch)
+    })
+)(Index)
