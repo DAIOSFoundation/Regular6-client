@@ -134,7 +134,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-restart')
     implementation project(':react-native-kakao-logins')
 //    implementation project(':react-native-kakao-login')
     implementation project(':react-native-fbsdk')
