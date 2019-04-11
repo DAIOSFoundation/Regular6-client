@@ -42,13 +42,16 @@ class MyPage extends Component {
     const {LoginActions, MyPageActions, platformId, email, profile_img, login_platform, accessToken, name} = this.props;
     try {
 
-      let data = {}
-      data.platformId = platformId;
-      data.email = email;
-      data.profile_img = profile_img;
-      data.login_platform = login_platform;
-      data.accessToken = accessToken;
-      data.name = name;
+      const loginInfoJson = await AsyncStorage.getItem('loginInfo');
+      let loginInfo = JSON.parse(loginInfoJson);
+      console.log('2222222222222222====================>', loginInfo)
+      // let data = {}
+      // data.platformId = platformId;
+      // data.email = email;
+      // data.profile_img = profile_img;
+      // data.login_platform = login_platform;
+      // data.accessToken = accessToken;
+      // data.name = name;
       // console.log('data=>', data);
 
       // AsyncStorage.getItem('isCheckLogin').then((token) => {
@@ -59,7 +62,7 @@ class MyPage extends Component {
       //   }
       // })
 
-      let userInfo = await LoginActions.create_user(data);
+      let userInfo = await LoginActions.create_user(loginInfo);
       let user = userInfo.data;
       let userId = user.userId;
       let membershipId = user.membershipId;
@@ -96,6 +99,8 @@ class MyPage extends Component {
     if (loading) return <Spinner color="black" style={styles.spinner}/>;
 
     if (visibleMembershipAmountView) {
+
+      console.log('name=========================:>', name);
       return (
         <ScrollView style={styles.container}>
 
@@ -218,7 +223,7 @@ class MyPage extends Component {
                 <Image style={styles.avatar}
                        source={{uri: profile_img}}/>
                 <Text style={styles.name}>
-                  {platformId}
+                  {name}
                 </Text>
 
               </View>
