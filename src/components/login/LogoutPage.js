@@ -22,9 +22,9 @@ class LogoutPage extends Component {
       // Actions.popTo('homeScreen');
       this.handleClearToken();
       // this.handleChangeLoading();
-      // Actions.replace('loginScreen');
-      Actions.popTo('loginScreen')
-      Actions.loginScreen();
+      Actions.replace('loginScreen');
+      // Actions.popTo('loginScreen')
+      // Actions.loginScreen();
     })
 
   };
